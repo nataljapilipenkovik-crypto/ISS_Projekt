@@ -1,0 +1,26 @@
+
+services:
+  # 1. TEENUS: Streamlit näidikutelaud
+  dashboard:
+    build: .
+    container_name: iss_dashboard
+    ports:
+      - "8501:8501"
+    volumes:
+      - iss_data:/app/data
+    restart: always
+
+  # 2. TEENUS: Andmete kogumise torujuhe (Pipeline)
+  pipeline:
+    build: .
+    container_name: iss_pipeline
+    volumes:
+      - iss_data:/app/data
+    # Käivitame skripti deemon-režiimis, et see koguks andmeid lõputult
+    command: python3 scripts/run_pipeline.py daemon
+    restart: always
+
+# Määrame ühise andmemahu (Volume), et mõlemad konteinerid näeksid samu CSV-faile
+volumes:
+  iss_data:
+    driver: local
