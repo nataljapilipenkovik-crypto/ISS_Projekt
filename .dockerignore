@@ -1,0 +1,22 @@
+# Keela Git-i ajaloo kopeerimine konteinerisse (see on väga raske)
+.git
+.gitignore
+
+# Keela virtuaalkeskkonna ja vahemälu kopeerimine
+__pycache__/
+*.pyc
+*.pyo
+.pypycolold/
+
+# Keela kohalikud andmefailid (konteiner peab koguma oma andmed ise)
+data/*.csv
+data/*.db
+
+# Keela arenduskeskkonna seaded ja salajased failid
+.env
+.vscode/
+.DS_Store
+
+# Keela dokumentatsioon (seda pole rakenduse tööks vaja)
+docs/
+README.md

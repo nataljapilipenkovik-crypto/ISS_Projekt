@@ -7,7 +7,7 @@ sys.path.append(str(Path(__file__).parent.parent))
 try:
     from scripts.ingest import main as run_ingest
     from scripts.transform import main as run_transform
-    from tests.test_data_quality import run_data_quality_tests  # UUS IMPORT
+    from tests.test_data_quality import run_data_quality_tests
 except ImportError as e:
     print(f"Viga moodulite importimisel: {e}")
     sys.exit(1)
@@ -17,32 +17,29 @@ def run_pipeline():
     print(f"Andmevoo käivitamine: {time.strftime('%Y-%m-%d %H:%M:%S')}")
     print("=" * 50)
     
-    # 1. SAMM: Ingest
     try:
         run_ingest()
     except Exception as e:
         print(f"!!! Viga Ingest sammus: {e}")
         return False
 
-    # 2. SAMM: Transform
     try:
         run_transform()
     except Exception as e:
         print(f"!!! Viga Transform sammus: {e}")
         return False
 
-    # 3. SAMM: Data Quality Tests (UUS SAMM)
-    print("\n[SAMM 3/3] Andmekvaliteedi kontroll (Data Quality Tests)...")
-    tests_passed = run_data_quality_tests()
-    
-    if not tests_passed:
-        print("!!! Torujuhe katkestati: Andmed ei läbinud kvaliteedikontrolli!")
-        return False
-
-    print("\n" + "=" * 50)
-    print("Kogu andmevoog koos testidega on edukalt läbitud!")
-    print("=" * 50)
-    return True
+    print("\n[SAMM 3/3] Andmekvaliteedi kontroll...")
+    return run_data_quality_tests()
 
 if __name__ == "__main__":
-    run_pipeline()
+    # Kui käivitatakse parameetriga 'daemon', töötab skript lõputult iga 60 sekundi järel
+    if len(sys.argv) > 1 and sys.argv[1] == "daemon":
+        print("Andmevoog käivitatud deemonina (lõputu tsükkel)...")
+        while True:
+            run_pipeline()
+            print("\nOotan 60 sekundit järgmise küsitluseni...\n")
+            time.sleep(60)
+    else:
+        # Ühekordne käivitus
+        run_pipeline()
