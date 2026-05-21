@@ -1,4 +1,4 @@
-Projekti progress ja struktuuri ülevaade
+##Projekti progress ja struktuuri ülevaade
 Kuupäev: 21. mai 2025
 
 Tegevus: Projekti repositooriumi loomine, baasarhitektuuri seadistamine ja failide rollide kaardistamine.
@@ -60,14 +60,14 @@ README.md Projekti esileht GitHubis. Hetkel on olemas baasstruktuur, kuid seda t
 Juhend meeskonnale: Kuidas projekti VS Code-is avada ja käivitada
 Selleks, et projekt sinu arvutis tööle hakkaks, tee läbi järgmised sammud terminalis (veendu, et Docker Desktop on taustal käivitatud):
 
-# 1. Klooni repositoorium oma arvutisse
+## 1. Klooni repositoorium oma arvutisse
 git clone <meie-repo-url>
 cd ISS_Projekt
 
-# 2. Loo näidise põhjal oma privaatne seadete fail (kui vajalik)
+## 2. Loo näidise põhjal oma privaatne seadete fail (kui vajalik)
 cp .env.example .env
 
-# 3. Käivita kogu süsteem (nii andmekoguja kui ka veebileht) Dockeris
+## 3. Käivita kogu süsteem (nii andmekoguja kui ka veebileht) Dockeris
 docker compose up -d --build
 
 Pärast seda avaneb Streamlit näidikutelaud sinu veebibrauseris aadressil: http://localhost:8501
