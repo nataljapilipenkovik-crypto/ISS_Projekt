@@ -1,4 +1,4 @@
-## [21. mai 2025] - Projekti hoidla seadistamine ja koostöö reeglid
+## [21. mai 2025] - Projekti hoidla seadistamine ja koostöö planeerimine
 
 **Tehtud tööd:**
 - Loodud avalik repositoorium `ISS_Projekt` ja selle baasstruktuur (`app/`, `data/`, `docs/`, `scripts/`, `tests/`).
