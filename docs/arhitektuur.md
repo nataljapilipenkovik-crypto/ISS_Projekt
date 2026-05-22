@@ -21,32 +21,18 @@ Rahvusvaheline Kosmosejaam (ISS) tiirleb ümber Maa kiirusega umbes 28 000 km/h 
 
 ## Andmevoog
 
-graph LR
-    subgraph Allikad [Andmeallikad]
-        API_ISS[OpenNotify API]
-        API_Weather[Open-Meteo API]
-    end
-
-    subgraph ETL [Kogumine ja Töötlus]
-        Python[Python Script / Cron job]
-        Transform[Andmete teisendus & Haversine arvutus]
-    end
-
-    subgraph Salvestamine [Andmebaasi kihid]
-        DB_Raw[(Staging / Raw layer: JSON)]
-        DB_Prod[(Production / DWH: Cleaned Tables)]
-    end
-
-    subgraph Esitlus [Näidikulaud]
-        Dashboard[Streamlit / Grafana / PowerBI]
-    end
-
-    API_ISS --> Python
-    API_Weather --> Python
-    Python --> DB_Raw
-    DB_Raw --> Transform
-    Transform --> DB_Prod
-    DB_Prod --> Dashboard
+flowchart LR
+    api_iss[Where the ISS at? API] --> ingest[Python sissevõtu skript]
+    api_weather[Open-Meteo API] --> ingest
+    geo_csv[Eesti asukohtade CSV] --> ingest
+    
+    ingest --> staging[(staging: raw_iss & raw_weather)]
+    staging --> transform[Transformatsioon & Haversine arvutus]
+    transform --> mart[(mart: fct_iss_passes & dim_weather)]
+    
+    mart --> dashboard[Näidikulaud: Streamlit / kaardi visualiseering]
+    mart --> quality[Andmekvaliteedi testid: koordinaatide vahemikud]
+    scheduler[Cron / GitHub Actions] --> ingest
 
 
 Täpsem kirjeldus: [`docs/arhitektuur.md`](docs/arhitektuur.md)
