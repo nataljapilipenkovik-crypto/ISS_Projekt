@@ -8,6 +8,7 @@ services:
       - "8501:8501"
     volumes:
       - iss_data:/app/data
+    command: streamlit run app/app.py --server.address=0.0.0.0 --server.port=8501
     restart: always
 
   # 2. TEENUS: Andmete kogumise torujuhe (Pipeline)
