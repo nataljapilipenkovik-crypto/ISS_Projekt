@@ -2,157 +2,85 @@
 
 ## Äriküsimus
 
-Millal ja kui kaua on Rahvusvaheline Kosmosejaam (ISS) Eestis nähtav ning kuidas selle trajektoor ja nähtavus ajas muutuvad?
+Millal, kus ja milliste tingimuste korral on Rahvusvaheline Kosmosejaam (ISS) Eesti territooriumilt palja silmaga nähtav ning milline on selle reaalajaline trajektoor võrreldes Eesti koordinaatidega?
 
-Projekt aitab visualiseerida ISS liikumist Eesti kohal ning hinnata nähtavust ilmastiku põhjal.
+Rahvusvaheline Kosmosejaam (ISS) tiirleb ümber Maa kiirusega umbes 28 000 km/h ning selle koordinaadid muutuvad pidevalt. See on ideaalne andmeallikas dünaamilise andmetorustiku (data pipeline) loomiseks.
 
-**Mõõdikud:**
+## Mõõdikud
 
-1. ISS nähtavuse kestus - Arvutatakse, kui kaua (minutites) ISS on Eestis nähtav ühe ülelennu jooksul.
-2. ISS ülelendude arv päevas - Loendatakse, mitu korda ISS liigub Eesti kohal ühe päeva jooksul.
-3. Keskmine nähtavuse kvaliteet - Arvutatakse keskmine nähtavuse kvaliteet ilmastikuandmete põhjal, kasutades pilvisuse protsenti ja ilmastikutingimusi.
+1. Nähtavuse aken (Visibility window): Aeg, mil ISS on horisondist kõrgemal kui 10 kraadi Eesti kohal (arvutatakse ISS-i asukoha asimuudi ja elektsiooni nurga põhjal Tallinna/Tartu koordinaatide suhtes).
+2. Pilvisuse indeks (Cloud cover index): Ilmaprognoosi pilvisuse protsentuaalne näitaja (0-100%) ISS-i ülelennu hetkel (kui pilvisus on > 50%, siis nähtavus on madal).
+3. Reaalajaline kaugus (Current distance): Hetkeline distants (kilomeetrites) ISS-i suborbitaalse punkti ja Eesti keskpunkti vahel (arvutatakse Haversine'i valemi abil).
 
-## Arhitektuur
-
-```mermaid
-flowchart TD
-
-A[ISS API] --> B[Python ingest.py]
-C[Weather API] --> B
-
-B --> D[(Raw CSV / SQLite)]
-
-D --> E[transform.py]
-
-E --> F[(Clean data)]
-
-F --> G[Data quality tests]
-
-G --> H[Streamlit Dashboard]
-```
-
-Täpsem kirjeldus: [`docs/arhitektuur.md`](docs/arhitektuur.md)
-
-## Andmestik
+## Andmeallikad
 
 | Allikas | Tüüp | Ajas muutuv? | Roll |
 |---------|------|--------------|------|
-| [Open Notify API](http://api.open-notify.org/iss-now.json) | ISS asukoha API | Jah, iga paari sekundi järel | Põhiandmevoog |
-| [Open-Meteo API](https://api.open-meteo.com) | Ilmaandmete API | Jah, vähemalt kord tunnis | Täiendav andmeallikas |
+| [Open Notify API](http://api.open-notify.org/iss-now.json) | ISS asukoha API | Uueneb iga 1-2 sekundi tagant (reaalajas). Meie loeme näiteks iga 10-15 minuti tagant (või tihedamalt ülelennu ajal) | Põhiandmevoog |
+| [Open-Meteo API](https://api.open-meteo.com) | Ilmaandmete API | Jah, Uueneb kord tunnis (prognoos ja hetkeseis).| Täiendav andmeallikas |
 
-## Stack
+## Andmevoog
 
-| Komponent | Tööriist |
-|-----------|---------|
-| Sissevõtt | Python |
-| Transformatsioon | Pandas |
-| Andmehoidla | SQLite / CSV |
-| Näidikulaud | Streamlit |
-| Orkestreerimine | Cron / Python scheduler |
+graph LR
+    subgraph Allikad [Andmeallikad]
+        API_ISS[OpenNotify API]
+        API_Weather[Open-Meteo API]
+    end
+
+    subgraph ETL [Kogumine ja Töötlus]
+        Python[Python Script / Cron job]
+        Transform[Andmete teisendus & Haversine arvutus]
+    end
+
+    subgraph Salvestamine [Andmebaasi kihid]
+        DB_Raw[(Staging / Raw layer: JSON)]
+        DB_Prod[(Production / DWH: Cleaned Tables)]
+    end
+
+    subgraph Esitlus [Näidikulaud]
+        Dashboard[Streamlit / Grafana / PowerBI]
+    end
+
+    API_ISS --> Python
+    API_Weather --> Python
+    Python --> DB_Raw
+    DB_Raw --> Transform
+    Transform --> DB_Prod
+    DB_Prod --> Dashboard
 
 
-## Käivitamine
+Täpsem kirjeldus: [`docs/arhitektuur.md`](docs/arhitektuur.md)
 
-```bash
-# 1. Klooni repo ja liigu kausta
-git clone <repo-url>
-cd <projekti-kaust>
+## Andmebaasi kihid 
 
-# 2. Kopeeri keskkonnamuutujad
-cp .env.example .env
-# Muuda .env failis paroolid ja muud seaded vastavalt vajadusele
-
-# 3. Käivita teenused
-docker compose up -d --build
-
-# 4. [Vabatahtlik: käivita sissevõtt käsitsi esimesel korral]
-# docker compose exec pipeline python scripts/run_pipeline.py run-all
-```
-
-Airflow (kui kasutatakse): http://localhost:8080 (kasutaja: airflow / parool: airflow)
-Näidikulaud: http://localhost:[PORT]
-
-## Saladused ja konfiguratsioon
-
-Kõik saladused (paroolid, API võtmed, andmebaasi URL-id) on `.env` failis. Repos on ainult `.env.example`, mis näitab vajalike muutujate struktuuri ilma tegelike väärtusteta. Päris `.env` faili ei tohi GitHubi panna - see on `.gitignore`-s.
-
-Vajalikud muutujad:
-
-| Muutuja | Tähendus | Näide |
-|---------|----------|-------|
-| `DB_PASSWORD` | PostgreSQL parool | (saladus) |
-| `[teised]` | ... | ... |
-
-## Andmevoog lühidalt
-
-1. **Sissevõtt** — API tagastab ISS reaalajas asukoha (laius- ja pikkuskraadid), API tagastab ilmaandmed Eestis, sealhulgas pilvisuse ja ilmastikutingimused.
-2. **Laadimine** — Andmed laaditakse `staging` kihti
-3. **Transformatsioon** — ISS ja ilmaandmed puhastatakse ning ühendatakse ajatempli alusel. Arvutatakse nähtavuse kestus, ülelendude arv ja nähtavuse kvaliteet.
-4. **Testimine** — Vähemalt 3 andmekvaliteedi testi kontrollivad andmete korrektsust ja täielikkust. andmekvaliteedi testi kontrollivad korrektsust
-5. **Näidikulaud** — Streamlit dashboard kuvab ISS trajektoori, nähtavuse kestust, ülelendude arvu ja ilmastikutingimusi Eestis.
-
-## Andmekvaliteedi testid
-
-Projekt kontrollib järgmist:
-
-1. ISS koordinaadid ei ole tühjad
-2. Laius- ja pikkuskraadid jäävad lubatud vahemikku
-3. Ajatempli väärtused ei ole tulevikus
-
-Testide tulemused kuvatakse terminalis ning salvestatakse logifaili.
-
-## Projekti struktuur
-
-```text
-.
-├── README.md
-├── docker-compose.yml
-├── Dockerfile
-├── requirements.txt
-├── .env.example
-├── .gitignore
-│
-├── docs/
-│   ├── arhitektuur.md
-│   └── progress.md
-│
-├── scripts/
-│   ├── ingest.py
-│   ├── transform.py
-│   └── run_pipeline.py
-│
-├── data/
-│
-├── tests/
-│
-└── app/
-    └── app.py
-```
-
-## Kokkuvõte, puudused ja võimalikud edasiarendused
-
-**Kokkuvõte:**
-- Projekti arhitektuur on planeeritud
-- Valitud on andmeallikad
-- Määratud on peamised mõõdikud
-
-**Puudused:**
-- Andmete ajalooline salvestamine pole veel realiseeritud
-- Dashboard on arendamisel
-
-**Mis edasi:**
-- Luua ingest.py skript
-- Salvestada ISS andmed SQLite andmebaasi
-- Luua Streamlit dashboard
-- Lisada Docker tugi
-
-## Meeskond
-
-| Nimi | Roll |
+| Kiht | Roll |
 |------|------|
-| Liisa Rikanson | [Roll] |
-| Natalja Pilipenko| [Roll] |
-| Kärt Siilats | [Roll] |
+| `staging` | Hoiab allika andmeid töötlemata kujul. |
+| `mart` | Hoiab transformeeritud ja ärilogikat sisaldavaid tabeleid. |
+
+
+## Tööjaotus
+| Roll | Vastutus | Täitja |
+|------|----------|--------|
+| Andmeallika omanik | Kirjutab sissevõtu loogika, hoiab API-t töös | [nimi] |
+| Transformatsioonide omanik | Kirjutab mart kihi mudelid ja mõõdikute arvutuse | [nimi] |
+| Kvaliteedi omanik | Kirjutab testid ja vaatab läbi ebaõnnestunud kontrollid | [Nimi] |
+| Näidikulaua omanik | Ehitab näidikulaua ja seob selle äriküsimusega | [Nimi] |
+
+## Riskid
+
+| Risk | Mõju | Maandus |
+|------|------|---------|
+| ISS-i kiirus | ISS lendab Eestist üle väga kiiresti (mõne minutiga) ning 15-minutise intervalliga andmete korjamisel magame ülelennu maha | Muudame skripti loogikat: tavapäraselt küsime andmeid kord tunnis, aga kui ISS jõuab Euroopa koordinaatidele, tihendame päringuid iga 10 sekundi tagant |
+| Tasuta Andmevoog | Tasuta kosmose-API-del on päringute limiit (Rate limit) või nad on tihti maas. | Lisame koodi try-catch ploki ja salvestame viimase teadaoleva trajektoori kiiruse, et vajadusel asukohta ajutiselt interpoleerida (ennustada). |
+
+
+## Privaatsus ja turve 
+
+- Projektis kasutatakse ainult avalikke anonüümseid andmeid, seega isikuandmete (GDPR) riski ei ole.
+
+- Turvalisus: API võtmed ja andmebaasi paroolid hoitakse kohalikus .env failis. Repositooriumisse seda ei panda (lisatakse .gitignore faili). Repos on olemas ainult .env.example, mis näitab struktuuri, aga ei sisalda paroole.
+
 
 
 

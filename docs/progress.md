@@ -1,13 +1,31 @@
-## [21. mai 2025] - Projekti hoidla seadistamine ja koostöö planeerimine
+# Edenemisraport
 
-**Tehtud tööd:**
-- Loodud avalik repositoorium `ISS_Projekt` ja selle baasstruktuur (`app/`, `data/`, `docs/`, `scripts/`, `tests/`).
-- Lisatud andmete kogumise, transformatsiooni ja testide skriptid (`ingest.py`, `transform.py`, `run_pipeline.py`, `test_data_quality.py`).
-- Seadistatud interaktiivne Streamlit veebirakendus (`app.py`).
-- Projekt pakendatud Dockerisse (`Dockerfile`, `.dockerignore`, `docker-compose.yml`).
+## Mis on valmis
 
-**Oluline info meeskonnale:**
-- **Koodi muutmiseks (git push):** Saada mulle oma **GitHubi kasutajanimi (username)**. Lisand sind kaasautoriks (*Collaborator*), misjärel pead oma e-mailil või GitHubis kutse vastu võtma.
-- **Käivitamine:** Salvesta kood, ava terminal projekti kaustas ja käivita: `docker compose up -d --build`. Rakendus avaneb aadressil `http://localhost:8501`.
-- **Töö lõpetamine:** Enne VS Code sulgemist salvesta failid (`Cmd+S` / `Ctrl+S`), peata terminalis protsessid (`Ctrl+C`) ja saada muudatused GitHubi käsuga:
-  `git add . && git commit -m "update" && git push origin main`
+- [x] Docker Compose käivitab kõik teenused
+- [x] Andmeid saadakse allikast kätte
+- [x] Andmed laetakse `staging` kihti
+- [x] Vähemalt üks transformatsioon toimib
+- [x] Vähemalt üks näidikulaud on nähtav
+- [x] Vähemalt üks andmekvaliteedi test läbib
+
+**Täpsustus:**
+Projekti hoidla `ISS_Projekt` on loodud ja baasarhitektuur on paigas. Seadistatud on automaatne andmetorustik (`run_pipeline.py`), mis teeb iga 60 sekundi järel päringuid ISS API ja Open-Meteo API suunas. Toorandmed salvestatakse CSV-kujul `staging` kihti (`raw_iss_weather.csv`). Transformatsiooni käigus (`transform.py`) kontrollitakse geograafiliste piiride (Bounding Box) abil ISS-i asukohta Eesti kohal ja arvutatakse pilvisuse põhjal nähtavuse indeks, mis salvestatakse faili `clean_iss_weather.csv`. Streamlit veebirakendus (`app.py`) kuvab puhastatud andmeid interaktiivsel kaardil.
+
+## Järgmised sammud
+
+- [ ] Skripti loogika optimeerimine: intervalli tihendamine (nt iga 10-30 sekundi järel), kui ISS jõuab Eesti lähedale ehk Euroopa koordinaatide aknasse.
+- [ ] Streamliti näidikuakna täiendamine ajalooliste ülelendude graafikutega ja visuaalsete märguannete lisamine ("Nähtav praegu" / "Ei ole nähtav").
+- [ ] Andmekvaliteedi testide integreerimine otse põhitorustikku enne andmete kirjutamist puhastatud faili, et vältida vigaste andmete sattumist näidikulauale.
+
+## Mis takistab
+
+- [Praegu pole blokeerivaid probleeme. Süsteemi põhikomponendid ja Dockeriseeritud keskkond töötavad plaanipäraselt.]
+
+## Kontrollpunkt
+
+Käsk, millega saab kontrollida, et töövoog töötab:
+
+```bash
+# Käivitab andmetorustiku ja kontrollib andmete liikumist allikatest kuni puhastatud CSV-ni
+docker compose exec pipeline python scripts/run_pipeline.py
