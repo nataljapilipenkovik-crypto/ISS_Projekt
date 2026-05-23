@@ -2,30 +2,31 @@
 
 ## Mis on valmis
 
-- [x] Docker Compose käivitab kõik teenused
-- [x] Andmeid saadakse allikast kätte
-- [x] Andmed laetakse `staging` kihti
-- [x] Vähemalt üks transformatsioon toimib
-- [x] Vähemalt üks näidikulaud on nähtav
-- [x] Vähemalt üks andmekvaliteedi test läbib
+- [x] Docker Compose käivitab kõik teenused (`db`, `pipeline`, `dashboard`)
+- [x] Andmeid saadakse allikatest (OpenNotify ja Open-Meteo) kätte
+- [x] Andmed laetakse `staging` kihti töötlemata kujul
+- [x] Vähemalt üks transformatsioon (asukoha ja nähtavuse arvutus) toimib
+- [x] Vähemalt üks näidikulaud (Streamlit kaart) on nähtav ja töötab
+- [x] Vähemalt üks andmekvaliteedi test (koordinaatide vahemikud) läbib
 
 **Täpsustus:**
-Projekti hoidla `ISS_Projekt` on loodud ja baasarhitektuur on paigas. Seadistatud on automaatne andmetorustik (`run_pipeline.py`), mis teeb iga 60 sekundi järel päringuid ISS API ja Open-Meteo API suunas. Toorandmed salvestatakse CSV-kujul `staging` kihti (`raw_iss_weather.csv`). Transformatsiooni käigus (`transform.py`) kontrollitakse geograafiliste piiride  abil ISS-i asukohta Eesti kohal ja arvutatakse pilvisuse põhjal nähtavuse indeks, mis salvestatakse faili `clean_iss_weather.csv`. Streamlit veebirakendus (`app.py`) kuvab puhastatud andmeid interaktiivsel kaardil.
+Projekti hoidla `ISS_Projekt` on loodud ja baasarhitektuur on paigas. Seadistatud on automaatne andmetorustik (`run_pipeline.py`), mis teeb taustaprotsessina iga 60 sekundi järel päringuid ISS API ja Open-Meteo API suunas. Toorandmed salvestatakse CSV-kujul `staging` kihti (`data/raw_iss_weather.csv`). 
+
+Transformatsiooni käigus kontrollitakse geograafiliste piiride (bounding box) abil ISS-i asukohta Eesti läheduses ja arvutatakse ilma pilvisuse põhjal jaama reaalne nähtavuse indeks, mis salvestatakse `mart` kihi faili `data/clean_iss_weather.csv`. Streamlit veebirakendus (`app/app.py`) kuvab puhastatud andmeid interaktiivsel kaardil.
 
 ## Järgmised sammud
 
-- [ ] Skripti loogika optimeerimine: intervalli tihendamine (nt iga 10-30 sekundi järel), kui ISS jõuab Eesti lähedale ehk Euroopa koordinaatide aknasse.
-- [ ] Streamliti näidikuakna täiendamine ajalooliste ülelendude graafikutega ja visuaalsete märguannete lisamine ("Nähtav praegu" / "Ei ole nähtav").
-- [ ] Andmekvaliteedi testide integreerimine otse põhitorustikku enne andmete kirjutamist puhastatud faili, et vältida vigaste andmete sattumist näidikulauale.
+- [ ] **Skripti loogika optimeerimine:** Intervalli dünaamiline tihendamine (nt iga 10–30 sekundi järel), kui ISS jõuab Eesti lähedale ehk Euroopa koordinaatide aknasse, et ülelende mitte maha magada.
+- [ ] **Näidikulaua täiendamine:** Streamliti akna täiendamine ajalooliste ülelendude graafikutega ja visuaalsete märguannete lisamine ("Nähtav praegu" / "Ei ole nähtav").
+- [ ] **Testide integreerimine:** Andmekvaliteedi kontrollide viimine otse põhitorustiku sisse vahetult enne andmete kirjutamist puhtasse faili, et vältida vigaste andmete sattumist näidikulauale.
 
 ## Mis takistab
 
-- [Praegu pole blokeerivaid probleeme. Süsteemi põhikomponendid ja Dockeriseeritud keskkond töötavad plaanipäraselt.]
+- Praegu blokeerivaid probleeme ei ole. Süsteemi põhikomponendid, andmete liikumine ja Dockeriseeritud keskkond töötavad plaanipäraselt.
 
 ## Kontrollpunkt
 
-Käsk, millega saab kontrollida, et töövoog töötab:
+Käsk, millega saab reaalajas veenduda, et andmetorustik töötab, teeb päringuid ja salvestab andmeid:
 
 ```bash
-# Käivitab andmetorustiku ja kontrollib andmete liikumist allikatest kuni puhastatud CSV-ni
-docker compose exec pipeline python scripts/run_pipeline.py
+docker compose logs -f pipeline

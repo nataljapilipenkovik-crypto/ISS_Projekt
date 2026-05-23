@@ -2,25 +2,25 @@
 
 ## Äriküsimus
 
-Millal, kus ja milliste tingimuste korral on Rahvusvaheline Kosmosejaam (ISS) Eesti territooriumilt palja silmaga nähtav ning milline on selle reaalajaline trajektoor võrreldes Eesti koordinaatidega?
+Millal, kus ja milliste tingimuste korral on Rahvusvaheline Kosmosejaam (ISS) Eesti territooriumilt palja silmaga nähtav ning milline on selle reaalajas trajektoor võrreldes Eesti koordinaatidega?
 
-Rahvusvaheline Kosmosejaam (ISS) tiirleb ümber Maa kiirusega umbes 28 000 km/h ning selle koordinaadid muutuvad pidevalt. See on ideaalne andmeallikas dünaamilise andmetorustiku (data pipeline) loomiseks.
+Rahvusvaheline Kosmosejaam (ISS) tiirleb ümber Maa kiirusega umbes 28 000 km/h ning selle koordinaadid muutuvad pidevalt. See on ideaalne andmeallikas dünaamilise andmetorustiku (*data pipeline*) loomiseks.
 
 ## Mõõdikud
 
-1. Nähtavuse aken (Visibility window): Aeg, mil ISS on horisondist kõrgemal kui 10 kraadi Eesti kohal (arvutatakse ISS-i asukoha asimuudi ja elektsiooni nurga põhjal Tallinna/Tartu koordinaatide suhtes).
-2. Pilvisuse indeks (Cloud cover index): Ilmaprognoosi pilvisuse protsentuaalne näitaja (0-100%) ISS-i ülelennu hetkel (kui pilvisus on > 50%, siis nähtavus on madal).
-3. Reaalajaline kaugus (Current distance): Hetkeline distants (kilomeetrites) ISS-i suborbitaalse punkti ja Eesti keskpunkti vahel (arvutatakse Haversine'i valemi abil).
+1. **Nähtavuse aken (*Visibility window*)** — Aeg, mil ISS on horisondist kõrgemal kui 10 kraadi Eesti kohal (arvutatakse ISS-i asukoha asimuudi ja elevatsiooni nurga põhjal Tallinna/Tartu koordinaatide suhtes).
+2. **Pilvisuse indeks (*Cloud cover index*)** — Ilmaprognoosi pilvisuse protsentuaalne näitaja (0–100%) ISS-i ülelennu hetkel. Kui pilvisus on suurem kui 50%, on jaama nähtavuse tõenäosus madal.
+3. **Hetkeline kaugus (*Current distance*)** — Distants (kilomeetrites) ISS-i suborbitaalse punkti ja Eesti keskpunkti vahel, mis arvutatakse Haversine'i valemi abil.
 
 ## Andmeallikad
 
 | Allikas | Tüüp | Ajas muutuv? | Roll |
-|---------|------|--------------|------|
-| [Open Notify API](http://api.open-notify.org/iss-now.json) | ISS asukoha API | Uueneb iga 1-2 sekundi tagant (reaalajas). Meie loeme näiteks iga 10-15 minuti tagant (või tihedamalt ülelennu ajal) | Põhiandmevoog |
-| [Open-Meteo API](https://api.open-meteo.com) | Ilmaandmete API | Jah, Uueneb kord tunnis (prognoos ja hetkeseis).| Täiendav andmeallikas |
+| :--- | :--- | :--- | :--- |
+| [Open Notify API](http://api.open-notify.org/iss-now.json) | ISS asukoha API | Jah, reaalajas (uueneb iga 1–2 sekundi järel). Meie pipeline pärib andmeid tihedamalt ülelennu akna ajal. | Põhiandmevoog |
+| [Open-Meteo API](https://api.open-meteo.com) | Ilmaandmete API | Jah, uueneb kord tunnis (prognoos ja hetkeseis). | Täiendav andmeallikas |
 
 ## Andmevoog
-
+```mermaid
 flowchart LR
     api_iss[OpenNotify ISS API] --> ingest[Python sissevõtu skript]
     api_weather[Open-Meteo API] --> ingest
@@ -34,7 +34,7 @@ flowchart LR
     mart --> quality[Andmekvaliteedi testid: koordinaatide vahemikud]
     scheduler[Cron / GitHub Actions] --> ingest
 
-
+```
 Täpsem kirjeldus: [`docs/arhitektuur.md`](docs/arhitektuur.md)
 
 ## Andmebaasi kihid 
@@ -48,10 +48,10 @@ Täpsem kirjeldus: [`docs/arhitektuur.md`](docs/arhitektuur.md)
 ## Tööjaotus
 | Roll | Vastutus | Täitja |
 |------|----------|--------|
-| Andmeallika omanik | Kirjutab sissevõtu loogika, hoiab API-t töös | Natalja Pilipenko |
-| Transformatsioonide omanik | Kirjutab mart kihi mudelid ja mõõdikute arvutuse | Natalja Pilipenko |
-| Kvaliteedi omanik | Kirjutab testid ja vaatab läbi ebaõnnestunud kontrollid | Liisa Rikanson |
-| Näidikulaua omanik | Ehitab näidikulaua ja seob selle äriküsimusega | Liisa Rikanson |
+| Andmeallika omanik | Kirjutab sissevõtu loogika, hoiab API-t töös | [nimi]|
+| Transformatsioonide omanik | Kirjutab mart kihi mudelid ja mõõdikute arvutuse | [nimi] |
+| Kvaliteedi omanik | Kirjutab testid ja vaatab läbi ebaõnnestunud kontrollid | [nimi] |
+| Näidikulaua omanik | Ehitab näidikulaua ja seob selle äriküsimusega | [nimi] |
 
 ## Riskid
 
@@ -64,7 +64,7 @@ Täpsem kirjeldus: [`docs/arhitektuur.md`](docs/arhitektuur.md)
 ## Privaatsus ja turve 
 
 - Projektis kasutatakse eranditult avalikke astronoomilisi ja meteoroloogilisi andmeid. Isikuandmeid (GDPR) ei koguta ega töödelda.
-- Kõik tundlikud andmed (andmebaasi paroolid, API võtmed) hoitakse kohalikus `.env` failis, mis on lisatud `.gitignore` faili ja mida GitHubi ei fanta.
+- Kõik tundlikud andmed (andmebaasi paroolid, API võtmed) hoitakse kohalikus `.env` failis, mis on lisatud `.gitignore` faili ja mida GitHubi ei lükata.
 - Projekti juurkaustas on loodud `.dockerignore` fail. See tagab, et `docker compose build` käsu ajal ei kopeerita kohalikku `.env` faili ega lokaalseid arendusfaile (nt `.venv`, `__pycache__`) Docker konteineri kujutise (image) sisse. See välistab tundlike andmete lekkimise konteinerist.
 
 

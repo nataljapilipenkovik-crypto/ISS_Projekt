@@ -1,5 +1,3 @@
-version: "3.8"
-
 services:
 
   # --- Andmebaas ---
@@ -15,21 +13,15 @@ services:
     ports:
       - "${DB_PORT_HOST:-55432}:5432"
     volumes:
-<<<<<<< HEAD
-      - ./init:/docker-entrypoint-initdb.d   # SQL-skriptid, mis käivituvad esimesel korral
+      - ./init:/docker-entrypoint-initdb.d
       - pgdata:/var/lib/postgresql
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-praktikum}"]
       interval: 10s
       retries: 5
       start_period: 5s
-=======
-      - iss_data:/app/data
-    command: streamlit run app/app.py --server.address=0.0.0.0 --server.port=8501
-    restart: always
->>>>>>> c2bfeba30c87ebc172981995d2835f905e89dfed
 
-  # --- Töövoo konteiner (Python ETL skript) ---
+  # --- Töövoo konteiner ---
   pipeline:
     build:
       context: .
@@ -52,7 +44,7 @@ services:
     working_dir: /app
     tty: true
 
-  # --- Näidikulaud (Streamlit) ---
+  # --- Näidikulaud ---
   dashboard:
     build:
       context: .
