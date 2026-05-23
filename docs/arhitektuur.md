@@ -22,7 +22,7 @@ Rahvusvaheline Kosmosejaam (ISS) tiirleb ümber Maa kiirusega umbes 28 000 km/h 
 ## Andmevoog
 
 flowchart LR
-    api_iss[Where the ISS at? API] --> ingest[Python sissevõtu skript]
+    api_iss[OpenNotify ISS API] --> ingest[Python sissevõtu skript]
     api_weather[Open-Meteo API] --> ingest
     geo_csv[Eesti asukohtade CSV] --> ingest
     
@@ -48,24 +48,24 @@ Täpsem kirjeldus: [`docs/arhitektuur.md`](docs/arhitektuur.md)
 ## Tööjaotus
 | Roll | Vastutus | Täitja |
 |------|----------|--------|
-| Andmeallika omanik | Kirjutab sissevõtu loogika, hoiab API-t töös | [nimi] |
-| Transformatsioonide omanik | Kirjutab mart kihi mudelid ja mõõdikute arvutuse | [nimi] |
-| Kvaliteedi omanik | Kirjutab testid ja vaatab läbi ebaõnnestunud kontrollid | [Nimi] |
-| Näidikulaua omanik | Ehitab näidikulaua ja seob selle äriküsimusega | [Nimi] |
+| Andmeallika omanik | Kirjutab sissevõtu loogika, hoiab API-t töös | Natalja Pilipenko |
+| Transformatsioonide omanik | Kirjutab mart kihi mudelid ja mõõdikute arvutuse | Natalja Pilipenko |
+| Kvaliteedi omanik | Kirjutab testid ja vaatab läbi ebaõnnestunud kontrollid | Liisa Rikanson |
+| Näidikulaua omanik | Ehitab näidikulaua ja seob selle äriküsimusega | Liisa Rikanson |
 
 ## Riskid
 
 | Risk | Mõju | Maandus |
 |------|------|---------|
 | ISS-i kiirus | ISS lendab Eestist üle väga kiiresti (mõne minutiga) ning 15-minutise intervalliga andmete korjamisel magame ülelennu maha | Muudame skripti loogikat: tavapäraselt küsime andmeid kord tunnis, aga kui ISS jõuab Euroopa koordinaatidele, tihendame päringuid iga 10 sekundi tagant |
-| Tasuta Andmevoog | Tasuta kosmose-API-del on päringute limiit (Rate limit) või nad on tihti maas. | Lisame koodi try-catch ploki ja salvestame viimase teadaoleva trajektoori kiiruse, et vajadusel asukohta ajutiselt interpoleerida (ennustada). |
+| Usaldusväärsus | Tasuta kosmose-API-del on päringute limiit (Rate limit) või nad on tihti maas. | Lisame koodi try-catch ploki ja salvestame viimase teadaoleva trajektoori kiiruse, et vajadusel asukohta ajutiselt interpoleerida (ennustada). |
 
 
 ## Privaatsus ja turve 
 
-- Projektis kasutatakse ainult avalikke anonüümseid andmeid, seega isikuandmete (GDPR) riski ei ole.
-
-- Turvalisus: API võtmed ja andmebaasi paroolid hoitakse kohalikus .env failis. Repositooriumisse seda ei panda (lisatakse .gitignore faili). Repos on olemas ainult .env.example, mis näitab struktuuri, aga ei sisalda paroole.
+- Projektis kasutatakse eranditult avalikke astronoomilisi ja meteoroloogilisi andmeid. Isikuandmeid (GDPR) ei koguta ega töödelda.
+- Kõik tundlikud andmed (andmebaasi paroolid, API võtmed) hoitakse kohalikus `.env` failis, mis on lisatud `.gitignore` faili ja mida GitHubi ei fanta.
+- Projekti juurkaustas on loodud `.dockerignore` fail. See tagab, et `docker compose build` käsu ajal ei kopeerita kohalikku `.env` faili ega lokaalseid arendusfaile (nt `.venv`, `__pycache__`) Docker konteineri kujutise (image) sisse. See välistab tundlike andmete lekkimise konteinerist.
 
 
 

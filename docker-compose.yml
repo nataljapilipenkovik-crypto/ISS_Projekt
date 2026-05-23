@@ -1,26 +1,75 @@
+version: "3.8"
 
 services:
-  # 1. TEENUS: Streamlit näidikutelaud
-  dashboard:
-    build: .
-    container_name: iss_dashboard
+
+  # --- Andmebaas ---
+  db:
+    image: pgduckdb/pgduckdb:18-v1.1.1
+    container_name: iss-projekt-db
+    env_file:
+      - .env
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
     ports:
-      - "8501:8501"
+      - "${DB_PORT_HOST:-55432}:5432"
     volumes:
-      - iss_data:/app/data
-    restart: always
+      - ./init:/docker-entrypoint-initdb.d   # SQL-skriptid, mis käivituvad esimesel korral
+      - pgdata:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-praktikum}"]
+      interval: 10s
+      retries: 5
+      start_period: 5s
 
-  # 2. TEENUS: Andmete kogumise torujuhe (Pipeline)
+  # --- Töövoo konteiner (Python ETL skript) ---
   pipeline:
-    build: .
-    container_name: iss_pipeline
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: iss-projekt-pipeline
+    env_file:
+      - .env
+    environment:
+      DB_HOST: db
+      DB_PORT: "5432"
+      DB_USER: ${POSTGRES_USER}
+      DB_PASSWORD: ${POSTGRES_PASSWORD}
+      DB_NAME: ${POSTGRES_DB}
+    depends_on:
+      db:
+        condition: service_healthy
     volumes:
-      - iss_data:/app/data
-    # Käivitame skripti deemon-režiimis, et see koguks andmeid lõputult
-    command: python3 scripts/run_pipeline.py daemon
-    restart: always
+      - ./scripts:/app/scripts
+      - ./data:/app/data
+    working_dir: /app
+    tty: true
 
-# Määrame ühise andmemahu (Volume), et mõlemad konteinerid näeksid samu CSV-faile
+  # --- Näidikulaud (Streamlit) ---
+  dashboard:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: iss-projekt-dashboard
+    env_file:
+      - .env
+    environment:
+      DB_HOST: db
+      DB_PORT: "5432"
+      DB_USER: ${POSTGRES_USER}
+      DB_PASSWORD: ${POSTGRES_PASSWORD}
+      DB_NAME: ${POSTGRES_DB}
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "${DASHBOARD_PORT_HOST:-8501}:8501"
+    volumes:
+      - ./app:/app/app
+      - ./data:/app/data
+    working_dir: /app
+    command: ["streamlit", "run", "app/app.py", "--server.address=0.0.0.0"]
+
 volumes:
-  iss_data:
-    driver: local
+  pgdata:

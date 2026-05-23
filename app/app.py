@@ -39,7 +39,7 @@ else:
         st.divider()
 
         # --- ÄRILOOGIKA JA HOIATUSED ---
-        st.subheader("👀 Nähtavuse staatus Eestis")
+        st.subheader("Nähtavuse staatus Eestis")
         
         # Kontrollime, kas viimases punktis on ISS Eesti kohal
         if latest_data["is_over_estonia"]:

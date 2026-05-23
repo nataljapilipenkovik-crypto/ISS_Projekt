@@ -10,7 +10,7 @@
 - [x] Vähemalt üks andmekvaliteedi test läbib
 
 **Täpsustus:**
-Projekti hoidla `ISS_Projekt` on loodud ja baasarhitektuur on paigas. Seadistatud on automaatne andmetorustik (`run_pipeline.py`), mis teeb iga 60 sekundi järel päringuid ISS API ja Open-Meteo API suunas. Toorandmed salvestatakse CSV-kujul `staging` kihti (`raw_iss_weather.csv`). Transformatsiooni käigus (`transform.py`) kontrollitakse geograafiliste piiride (Bounding Box) abil ISS-i asukohta Eesti kohal ja arvutatakse pilvisuse põhjal nähtavuse indeks, mis salvestatakse faili `clean_iss_weather.csv`. Streamlit veebirakendus (`app.py`) kuvab puhastatud andmeid interaktiivsel kaardil.
+Projekti hoidla `ISS_Projekt` on loodud ja baasarhitektuur on paigas. Seadistatud on automaatne andmetorustik (`run_pipeline.py`), mis teeb iga 60 sekundi järel päringuid ISS API ja Open-Meteo API suunas. Toorandmed salvestatakse CSV-kujul `staging` kihti (`raw_iss_weather.csv`). Transformatsiooni käigus (`transform.py`) kontrollitakse geograafiliste piiride  abil ISS-i asukohta Eesti kohal ja arvutatakse pilvisuse põhjal nähtavuse indeks, mis salvestatakse faili `clean_iss_weather.csv`. Streamlit veebirakendus (`app.py`) kuvab puhastatud andmeid interaktiivsel kaardil.
 
 ## Järgmised sammud
 

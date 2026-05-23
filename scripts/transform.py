@@ -1,7 +1,7 @@
 import pandas as pd
 from pathlib import Path
 
-# Eesti geograafilised piirid (Bounding Box)
+# Eesti geograafilised piirid
 EST_LAT_MIN = 57.51
 EST_LAT_MAX = 59.82
 EST_LON_MIN = 21.77
