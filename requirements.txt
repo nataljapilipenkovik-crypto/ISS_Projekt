@@ -1,3 +1,9 @@
+<<<<<<< HEAD
 requests
 pandas
 streamlit
+=======
+streamlit
+pandas
+requests
+>>>>>>> c2bfeba30c87ebc172981995d2835f905e89dfed
