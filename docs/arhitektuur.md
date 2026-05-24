@@ -4,18 +4,18 @@
 
 Millal, kus ja milliste tingimuste korral on Rahvusvaheline Kosmosejaam (ISS) Eesti territooriumilt palja silmaga nähtav ning milline on selle reaalajas trajektoor võrreldes Eesti koordinaatidega?
 
-Rahvusvaheline Kosmosejaam (ISS) tiirleb ümber Maa kiirusega umbes 28 000 km/h ning selle koordinaadid muutuvad pidevalt. See on ideaalne andmeallikas dünaamilise andmetorustiku (*data pipeline*) loomiseks.
+Rahvusvaheline Kosmosejaam (ISS) tiirleb ümber Maa kiirusega umbes 28 000 km/h ning selle koordinaadid muutuvad pidevalt. See on ideaalne andmeallikas dünaamilise andmetorustiku loomiseks.
 
 ## Mõõdikud
 
-1. **Nähtavuse aken (*Visibility window*)** — Aeg, mil ISS on horisondist kõrgemal kui 10 kraadi Eesti kohal (arvutatakse ISS-i asukoha asimuudi ja elevatsiooni nurga põhjal Tallinna/Tartu koordinaatide suhtes).
-2. **Pilvisuse indeks (*Cloud cover index*)** — Ilmaprognoosi pilvisuse protsentuaalne näitaja (0–100%) ISS-i ülelennu hetkel. Kui pilvisus on suurem kui 50%, on jaama nähtavuse tõenäosus madal.
-3. **Hetkeline kaugus (*Current distance*)** — Distants (kilomeetrites) ISS-i suborbitaalse punkti ja Eesti keskpunkti vahel, mis arvutatakse Haversine'i valemi abil.
+1. **Nähtavuse aken** — Aeg, mil ISS on horisondist kõrgemal kui 10 kraadi Eesti kohal (arvutatakse ISS-i asukoha asimuudi ja elevatsiooni nurga põhjal Tallinna/Tartu koordinaatide suhtes).
+2. **Pilvisuse indeks** — Ilmaprognoosi pilvisuse protsentuaalne näitaja (0–100%) ISS-i ülelennu hetkel. Kui pilvisus on suurem kui 50%, on jaama nähtavuse tõenäosus madal.
+3. **Hetkeline kaugus** — Distants (kilomeetrites) ISS-i suborbitaalse punkti ja Eesti keskpunkti vahel, mis arvutatakse Haversine'i valemi abil.
 
 ## Andmeallikad
 
 | Allikas | Tüüp | Ajas muutuv? | Roll |
-| :--- | :--- | :--- | :--- |
+| ----- | ----- | ----- | ----- |
 | [Open Notify API](http://api.open-notify.org/iss-now.json) | ISS asukoha API | Jah, reaalajas (uueneb iga 1–2 sekundi järel). Meie pipeline pärib andmeid tihedamalt ülelennu akna ajal. | Põhiandmevoog |
 | [Open-Meteo API](https://api.open-meteo.com) | Ilmaandmete API | Jah, uueneb kord tunnis (prognoos ja hetkeseis). | Täiendav andmeallikas |
 
@@ -48,10 +48,10 @@ Täpsem kirjeldus: [`docs/arhitektuur.md`](docs/arhitektuur.md)
 ## Tööjaotus
 | Roll | Vastutus | Täitja |
 |------|----------|--------|
-| Andmeallika omanik | Kirjutab sissevõtu loogika, hoiab API-t töös | [nimi]|
-| Transformatsioonide omanik | Kirjutab mart kihi mudelid ja mõõdikute arvutuse | [nimi] |
-| Kvaliteedi omanik | Kirjutab testid ja vaatab läbi ebaõnnestunud kontrollid | [nimi] |
-| Näidikulaua omanik | Ehitab näidikulaua ja seob selle äriküsimusega | [nimi] |
+| Andmeallika omanik | Kirjutab sissevõtu loogika, hoiab API-t töös | Natalja|
+| Transformatsioonide omanik | Kirjutab mart kihi mudelid ja mõõdikute arvutuse | Natalja |
+| Kvaliteedi omanik | Kirjutab testid ja vaatab läbi ebaõnnestunud kontrollid | Liisa |
+| Näidikulaua omanik | Ehitab näidikulaua ja seob selle äriküsimusega | Liisa |
 
 ## Riskid
 
