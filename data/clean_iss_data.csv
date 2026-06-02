@@ -1,0 +1,6 @@
+timestamp,iss_latitude,iss_longitude,distance_km,elevation_deg,azimuth_deg,cloud_cover_percent,visibility_index
+2026-06-03 01:39:09,41.2154,-176.7814,8722.71,-37.0,17.0,97.0,EI OLE NÄHTAV (Pilves või liiga kaugel)
+2026-06-03 02:08:50,5.863,-52.932,8785.85,-37.3,263.2,99.0,EI OLE NÄHTAV (Pilves või liiga kaugel)
+2026-06-03 02:12:49,-6.2379,-44.3101,9462.88,-40.6,249.5,99.0,EI OLE NÄHTAV (Pilves või liiga kaugel)
+2026-06-03 02:13:58,-9.7191,-41.7721,9665.44,-41.5,245.6,99.0,EI OLE NÄHTAV (Pilves või liiga kaugel)
+2026-06-03 02:15:47,-15.1653,-37.6336,9986.53,-43.1,239.5,100.0,EI OLE NÄHTAV (Pilves või liiga kaugel)
