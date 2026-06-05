@@ -16,6 +16,9 @@ if not os.path.exists(failitee):
     st.warning("Andmefaili veel pole! Käivita esmalt: `python scripts/ingest.py`")
 else:
     df = pd.read_csv(failitee)
+    df["timestamp"] = pd.to_datetime(df["timestamp"]) #video jaoks
+    today = pd.Timestamp.today().date() #video jaoks
+    df = df[df["timestamp"].dt.date == today] #video jaoks
 
     if df.empty:
         st.info("Andmefail on tühi.")
