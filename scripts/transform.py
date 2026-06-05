@@ -1,1 +1,0 @@
-print("Siia faili kirjutame järgmistel nädalatel asukoha ja pilvisuse arvutused.")
