@@ -34,7 +34,7 @@ Testide käivitamine:
 python tests/run_tests.py
 
 ## Käivitamine
-
+```bash
 1. Paigalda sõltuvused
 
 pip install -r requirements.txt
@@ -50,6 +50,7 @@ python tests/run_tests.py
 4. Käivita näidikulaud
 
 streamlit run app/app.py
+```
 
 ## Tulemused
 
