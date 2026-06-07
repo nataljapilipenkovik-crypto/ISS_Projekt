@@ -59,7 +59,7 @@ try:
     # Arvutame astronoomilised mõõdikud
     distants, elevatsioon, asimuut = arvuta_mõõdikud(iss_lat, iss_lon)
     
-    # Ärilogika: Nähtavuse akna hindamine
+    # Äriloogika: Nähtavuse akna hindamine
     if elevatsioon > 10 and pilvisus <= 50:
         indeks = "KÕRGE (ISS on nähtav!)"
     elif elevatsioon > 0 and pilvisus <= 50:
