@@ -35,26 +35,52 @@ python tests/run_tests.py
 
 ## Käivitamine
 ```bash
-1. Paigalda sõltuvused
+# 1. Paigalda sõltuvused
 
 pip install -r requirements.txt
 
-2. Käivita andmete kogumine
+# 2. Käivita andmete kogumine
 
 python scripts/ingest.py
 
-3. Käivita testid
+# 3. Käivita testid
 
 python tests/run_tests.py
 
-4. Käivita näidikulaud
+# 4. Käivita näidikulaud
 
 streamlit run app/app.py
 ```
+Näidikulaud on brauseris koheselt kättesaadav aadressil: http://localhost:8501
 
 ## Tulemused
 
 Projekt võimaldab koguda reaalajas ISS-i asukohaandmeid, kombineerida neid Eesti pilvisusandmetega ning hinnata automaatselt ISS-i nähtavust Eesti piirkonnas.
+
+
+## Projekti struktuur
+
+```
+.
+├── README.md                  
+├── compose.yml               
+├── Dockerfile                
+├── .env.example              
+├── .gitignore                
+├── .dockerignore             
+├── requirements.txt          
+├── data/                     
+│   ├── raw_iss_weather.csv   
+│   └── clean_iss_weather.csv 
+├── app/
+│   └── app.py                
+├── scripts/
+│   └── run_pipeline.py       
+└── docs/
+    ├── arhitektuur.md        
+    └── progress.md           
+```
+
 
 ## Refleksioon
 
@@ -69,5 +95,7 @@ Projekti käigus õppisime reaalajas API-de kasutamist, andmete transformeerimis
 - Nähtavuse mudel on lihtsustatud.
 
 ## Meeskond
-- Natalja Pilipenko — arhitektuur, andmeallikad, andmetorustiku ja transformatsioonide arendus, andmekvaliteedi testid
-- Liisa Rikanson — näidikulaud, dokumentatsioon, koodi testimine ja projekti video
+| Nimi | Roll |
+|------|------|
+| Natalja Pilipenko | arhitektuur, andmeallikad, andmetorustiku ja transformatsioonide arendus, andmekvaliteedi testid|
+|Liisa Rikanson | näidikulaud, dokumentatsioon, koodi testimine ja projekti video|
